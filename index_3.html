@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Установить Truston PWA</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4285f4">
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      max-width: 400px;
+      padding: 32px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    h1 {
+      color: #4285f4;
+      margin-bottom: 16px;
+    }
+    #installPWA {
+      display: none;
+      margin-top: 24px;
+      padding: 14px 32px;
+      font-size: 20px;
+      background: #4285f4;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      cursor: pointer;
+    }
+    #installedMsg {
+      display: none;
+      margin-top: 24px;
+      color: green;
+      font-weight: bold;
+    }
+    .hint {
+      margin-top: 32px;
+      color: #888;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Truston PWA</h1>
+    <p>Установите приложение автосервиса Truston на свой телефон или компьютер для быстрого доступа!</p>
+    <button id="installPWA">Установить приложение</button>
+    <div id="installedMsg">Приложение установлено!</div>
+    <div class="hint">Если кнопка не появилась — обновите страницу или проверьте настройки браузера.</div>
+  </div>
+  <script>
+    let deferredPrompt;
+    const installBtn = document.getElementById('installPWA');
+    const installedMsg = document.getElementById('installedMsg');
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'inline-block';
+    });
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          installBtn.style.display = 'none';
+          installedMsg.style.display = 'block';
+        }
+        deferredPrompt = null;
+      }
+    });
+    window.addEventListener('appinstalled', () => {
+      installBtn.style.display = 'none';
+      installedMsg.style.display = 'block';
+    });
+  </script>
+</body>
+</html> 
